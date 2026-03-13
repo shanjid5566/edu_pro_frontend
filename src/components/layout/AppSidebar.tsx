@@ -44,24 +44,34 @@ const AppSidebar = () => {
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         } ${collapsed ? 'w-[72px]' : 'w-64'}`}
       >
-        {/* Logo */}
         <div className={`flex h-16 items-center border-b border-sidebar-border ${collapsed ? 'justify-center px-2' : 'justify-between px-4'}`}>
-          {!collapsed && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <GraduationCap className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <span className="text-lg font-bold text-sidebar-primary-foreground">EduPro</span>
-            </motion.div>
-          )}
-          {collapsed && (
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shrink-0">
               <GraduationCap className="h-5 w-5 text-primary-foreground" />
             </div>
-          )}
-          <button onClick={toggleSidebar} className="text-sidebar-foreground hover:text-sidebar-primary-foreground lg:hidden">
-            <X className="h-5 w-5" />
-          </button>
+            {!collapsed && (
+              <motion.span
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-lg font-bold text-sidebar-primary-foreground"
+              >
+                EduPro
+              </motion.span>
+            )}
+          </div>
+          
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              className="hidden h-8 w-8 items-center justify-center rounded-lg text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-primary-foreground transition-colors lg:flex"
+              title={collapsed ? "Expand" : "Collapse"}
+            >
+              <ChevronLeft className={`h-5 w-5 transition-transform duration-300 ${collapsed ? 'rotate-180' : ''}`} />
+            </button>
+            <button onClick={toggleSidebar} className="text-sidebar-foreground hover:text-sidebar-primary-foreground lg:hidden">
+              <X className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
         {/* Nav Items */}
@@ -114,13 +124,7 @@ const AppSidebar = () => {
 
         {/* Footer */}
         <div className={`border-t border-sidebar-border p-3 space-y-1`}>
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="hidden w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-primary-foreground transition-colors lg:flex"
-          >
-            <ChevronLeft className={`h-5 w-5 shrink-0 transition-transform duration-300 ${collapsed ? 'rotate-180' : ''}`} />
-            {!collapsed && <span>Collapse</span>}
-          </button>
+
           <button
             onClick={logout}
             className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground hover:bg-destructive/20 hover:text-destructive transition-colors ${collapsed ? 'justify-center' : ''}`}
