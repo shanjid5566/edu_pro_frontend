@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { mockStudents } from '@/services/mockData';
-import { Search, Plus, Filter, Download, Eye, Pencil, Trash2, X, Save } from 'lucide-react';
+import { Search, Plus, Filter, Download, Eye, Pencil, Trash2, X, Save, Copy, RefreshCw, Eye as EyeIcon, EyeOff } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
 import { toast } from '@/hooks/use-toast';
 
@@ -11,6 +11,81 @@ const Students = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState<string | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    class: '10',
+    section: 'A',
+    rollNumber: '',
+    dateOfBirth: '',
+    gender: 'male' as 'male' | 'female' | 'other',
+    phone: '',
+    parentName: '',
+    address: '',
+    password: '',
+  });
+
+  const generatePassword = () => {
+    const length = 12;
+    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    const numbers = '0123456789';
+    const symbols = '!@#$%^&*';
+    const allChars = uppercase + lowercase + numbers + symbols;
+    
+    let password = '';
+    password += uppercase.charAt(Math.floor(Math.random() * uppercase.length));
+    password += lowercase.charAt(Math.floor(Math.random() * lowercase.length));
+    password += numbers.charAt(Math.floor(Math.random() * numbers.length));
+    password += symbols.charAt(Math.floor(Math.random() * symbols.length));
+    
+    for (let i = 4; i < length; i++) {
+      password += allChars.charAt(Math.floor(Math.random() * allChars.length));
+    }
+    
+    return password.split('').sort(() => 0.5 - Math.random()).join('');
+  };
+
+  const handlePasswordGenerate = () => {
+    const newPassword = generatePassword();
+    setFormData({ ...formData, password: newPassword });
+    toast({ title: 'Password Generated', description: 'A strong password has been generated.' });
+  };
+
+  const handleAddStudent = () => {
+    if (formData.name && formData.email && formData.password) {
+      setShowAddModal(false);
+      setFormData({
+        name: '',
+        email: '',
+        class: '10',
+        section: 'A',
+        rollNumber: '',
+        dateOfBirth: '',
+        gender: 'male',
+        phone: '',
+        parentName: '',
+        address: '',
+        password: '',
+      });
+      setShowPassword(false);
+      toast({ 
+        title: 'Student Added Successfully', 
+        description: `Email: ${formData.email}\nPassword: ${formData.password}`,
+      });
+    } else {
+      toast({ 
+        title: 'Error', 
+        description: 'Please fill in all required fields (Name, Email, Password)',
+      });
+    }
+  };
+
+  const copyPasswordToClipboard = () => {
+    navigator.clipboard.writeText(formData.password);
+    toast({ title: 'Copied', description: 'Password copied to clipboard.' });
+  };
 
   const filtered = mockStudents.filter(s => {
     const matchSearch = s.name.toLowerCase().includes(search.toLowerCase()) || s.email.toLowerCase().includes(search.toLowerCase());
@@ -111,23 +186,73 @@ const Students = () => {
       </div>
 
       {/* Add/Edit Student Modal */}
-      <Modal open={showAddModal} onClose={() => setShowAddModal(false)} title="Add New Student" description="Enter student details" size="lg">
+      <Modal open={showAddModal} onClose={() => { setShowAddModal(false); setShowPassword(false); }} title="Add New Student" description="Enter student details and set password for first login" size="lg">
         <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
-            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Full Name</label><input placeholder="Enter full name" className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" /></div>
-            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Email</label><input type="email" placeholder="student@school.com" className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" /></div>
-            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Class</label><select className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-primary focus:outline-none"><option>10</option><option>9</option><option>8</option><option>7</option></select></div>
-            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Section</label><select className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-primary focus:outline-none"><option>A</option><option>B</option><option>C</option></select></div>
-            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Roll Number</label><input placeholder="e.g. 101" className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" /></div>
-            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Date of Birth</label><input type="date" className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-primary focus:outline-none" /></div>
-            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Gender</label><select className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-primary focus:outline-none"><option>Male</option><option>Female</option><option>Other</option></select></div>
-            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Phone</label><input placeholder="+1 555 0000" className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" /></div>
-            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Parent Name</label><input placeholder="Enter parent name" className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" /></div>
-            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Address</label><input placeholder="Enter address" className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" /></div>
+            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Full Name *</label><input value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Enter full name" className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" /></div>
+            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Email *</label><input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="student@school.com" className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" /></div>
+            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Class</label><select value={formData.class} onChange={e => setFormData({...formData, class: e.target.value})} className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-primary focus:outline-none"><option>10</option><option>9</option><option>8</option><option>7</option></select></div>
+            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Section</label><select value={formData.section} onChange={e => setFormData({...formData, section: e.target.value})} className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-primary focus:outline-none"><option>A</option><option>B</option><option>C</option></select></div>
+            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Roll Number</label><input value={formData.rollNumber} onChange={e => setFormData({...formData, rollNumber: e.target.value})} placeholder="e.g. 101" className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" /></div>
+            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Date of Birth</label><input type="date" value={formData.dateOfBirth} onChange={e => setFormData({...formData, dateOfBirth: e.target.value})} className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-primary focus:outline-none" /></div>
+            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Gender</label><select value={formData.gender} onChange={e => setFormData({...formData, gender: e.target.value as any})} className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-primary focus:outline-none"><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option></select></div>
+            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Phone</label><input value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="+1 555 0000" className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" /></div>
+            <div><label className="mb-1.5 block text-sm font-medium text-foreground">Parent Name</label><input value={formData.parentName} onChange={e => setFormData({...formData, parentName: e.target.value})} placeholder="Enter parent name" className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" /></div>
+            <div className="sm:col-span-2"><label className="mb-1.5 block text-sm font-medium text-foreground">Address</label><input value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} placeholder="Enter address" className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none" /></div>
           </div>
+
+          {/* Password Section */}
+          <div className="rounded-lg border border-border bg-secondary/30 p-4">
+            <h3 className="mb-3 text-sm font-semibold text-foreground">Login Credentials *</h3>
+            <div className="space-y-3">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-foreground">Password *</label>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <input 
+                      type={showPassword ? 'text' : 'password'} 
+                      value={formData.password} 
+                      onChange={e => setFormData({...formData, password: e.target.value})} 
+                      placeholder="Enter password or generate one" 
+                      className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none pr-10" 
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)} 
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                    </button>
+                  </div>
+                  <button 
+                    type="button"
+                    onClick={handlePasswordGenerate}
+                    className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-border bg-card px-3 text-sm font-medium text-foreground hover:bg-secondary transition-colors"
+                  >
+                    <RefreshCw className="h-4 w-4" /> Generate
+                  </button>
+                  {formData.password && (
+                    <button 
+                      type="button"
+                      onClick={copyPasswordToClipboard}
+                      className="inline-flex h-10 items-center gap-1.5 rounded-lg bg-primary/10 px-3 text-sm font-medium text-primary hover:bg-primary/20 transition-colors"
+                    >
+                      <Copy className="h-4 w-4" /> Copy
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="rounded-md bg-warning/10 p-2.5">
+                <p className="text-xs text-warning">
+                  <strong>Note:</strong> Share this password with the student for first login. The student can change it from their profile settings after logging in.
+                </p>
+              </div>
+            </div>
+          </div>
+
           <div className="flex justify-end gap-2 pt-2">
-            <button onClick={() => setShowAddModal(false)} className="h-10 rounded-lg border border-border px-4 text-sm font-medium text-foreground hover:bg-secondary transition-colors">Cancel</button>
-            <button onClick={() => { setShowAddModal(false); toast({ title: 'Student Added', description: 'New student has been added successfully.' }); }} className="inline-flex h-10 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"><Save className="h-4 w-4" /> Save Student</button>
+            <button onClick={() => { setShowAddModal(false); setShowPassword(false); }} className="h-10 rounded-lg border border-border px-4 text-sm font-medium text-foreground hover:bg-secondary transition-colors">Cancel</button>
+            <button onClick={handleAddStudent} className="inline-flex h-10 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"><Save className="h-4 w-4" /> Save Student</button>
           </div>
         </div>
       </Modal>
