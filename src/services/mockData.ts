@@ -53,3 +53,28 @@ export const mockRevenueData = [
   { month: 'Jan', revenue: 55000 },
   { month: 'Feb', revenue: 67000 },
 ];
+
+export const mockClassSchedules = [
+  // Class 10-A Schedules
+  { id: '1', classId: '1', className: 'Class 10', classSection: 'A', day: 'Monday' as const, subject: 'Mathematics', teacher: 'Emily Carter', startTime: '09:00', endTime: '10:00', room: '101' },
+  { id: '2', classId: '1', className: 'Class 10', classSection: 'A', day: 'Monday' as const, subject: 'Physics', teacher: 'Rachel Kim', startTime: '10:00', endTime: '11:00', room: '102' },
+  { id: '3', classId: '1', className: 'Class 10', classSection: 'A', day: 'Monday' as const, subject: 'English', teacher: 'David Park', startTime: '11:00', endTime: '12:00', room: '103' },
+  { id: '4', classId: '1', className: 'Class 10', classSection: 'A', day: 'Tuesday' as const, subject: 'Chemistry', teacher: 'Rachel Kim', startTime: '09:00', endTime: '10:00', room: '104' },
+  { id: '5', classId: '1', className: 'Class 10', classSection: 'A', day: 'Tuesday' as const, subject: 'Computer Science', teacher: 'Lisa Anderson', startTime: '10:00', endTime: '11:00', room: '105' },
+  { id: '6', classId: '1', className: 'Class 10', classSection: 'A', day: 'Wednesday' as const, subject: 'Mathematics', teacher: 'Emily Carter', startTime: '09:00', endTime: '10:00', room: '101' },
+  { id: '7', classId: '1', className: 'Class 10', classSection: 'A', day: 'Thursday' as const, subject: 'Physics', teacher: 'Rachel Kim', startTime: '09:00', endTime: '10:00', room: '102' },
+  { id: '8', classId: '1', className: 'Class 10', classSection: 'A', day: 'Friday' as const, subject: 'English', teacher: 'David Park', startTime: '09:00', endTime: '10:00', room: '103' },
+  
+  // Class 10-B Schedules
+  { id: '9', classId: '2', className: 'Class 10', classSection: 'B', day: 'Monday' as const, subject: 'Mathematics', teacher: 'Emily Carter', startTime: '01:00', endTime: '02:00', room: '106' },
+  { id: '10', classId: '2', className: 'Class 10', classSection: 'B', day: 'Monday' as const, subject: 'Physics', teacher: 'Rachel Kim', startTime: '02:00', endTime: '03:00', room: '107' },
+  { id: '11', classId: '2', className: 'Class 10', classSection: 'B', day: 'Tuesday' as const, subject: 'Chemistry', teacher: 'Rachel Kim', startTime: '01:00', endTime: '02:00', room: '104' },
+  { id: '12', classId: '2', className: 'Class 10', classSection: 'B', day: 'Wednesday' as const, subject: 'Computer Science', teacher: 'Lisa Anderson', startTime: '01:00', endTime: '02:00', room: '105' },
+  
+  // Class 9-A Schedules
+  { id: '13', classId: '3', className: 'Class 9', classSection: 'A', day: 'Monday' as const, subject: 'Math', teacher: 'Emily Carter', startTime: '09:00', endTime: '10:00', room: '108' },
+  { id: '14', classId: '3', className: 'Class 9', classSection: 'A', day: 'Tuesday' as const, subject: 'Science', teacher: 'Rachel Kim', startTime: '09:00', endTime: '10:00', room: '109' },
+  { id: '15', classId: '3', className: 'Class 9', classSection: 'A', day: 'Wednesday' as const, subject: 'English', teacher: 'David Park', startTime: '09:00', endTime: '10:00', room: '103' },
+  { id: '16', classId: '3', className: 'Class 9', classSection: 'A', day: 'Thursday' as const, subject: 'History', teacher: 'Michael Chen', startTime: '09:00', endTime: '10:00', room: '110' },
+  { id: '17', classId: '3', className: 'Class 9', classSection: 'A', day: 'Friday' as const, subject: 'Geography', teacher: 'Michael Chen', startTime: '09:00', endTime: '10:00', room: '111' },
+];

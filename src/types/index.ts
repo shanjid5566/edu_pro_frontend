@@ -64,6 +64,19 @@ export interface ClassInfo {
   subjects: string[];
 }
 
+export interface ClassSchedule {
+  id: string;
+  classId: string;
+  className: string;
+  classSection: string;
+  day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday';
+  subject: string;
+  teacher: string;
+  startTime: string;
+  endTime: string;
+  room?: string;
+}
+
 export interface Exam {
   id: string;
   name: string;

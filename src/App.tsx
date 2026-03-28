@@ -14,6 +14,7 @@ import Students from "@/pages/admin/Students";
 import Teachers from "@/pages/admin/Teachers";
 import Parents from "@/pages/admin/Parents";
 import Classes from "@/pages/admin/Classes";
+import ClassScheduleManagement from "@/pages/admin/ClassSchedule";
 import Exams from "@/pages/admin/Exams";
 import AdminAttendance from "@/pages/admin/Attendance";
 import Settings from "@/pages/admin/Settings";
@@ -61,6 +62,7 @@ const AppRoutes = () => {
         <Route path="/admin/teachers" element={<Teachers />} />
         <Route path="/admin/parents" element={<Parents />} />
         <Route path="/admin/classes" element={<Classes />} />
+        <Route path="/admin/schedule" element={<ClassScheduleManagement />} />
         <Route path="/admin/exams" element={<Exams />} />
         <Route path="/admin/attendance" element={<AdminAttendance />} />
         <Route path="/admin/notices" element={<NoticeBoard />} />

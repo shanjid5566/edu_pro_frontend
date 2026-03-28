@@ -6,6 +6,7 @@ export const navigationItems: NavItem[] = [
   { title: 'Teachers', href: '/admin/teachers', icon: 'Users', roles: ['admin'] },
   { title: 'Parents', href: '/admin/parents', icon: 'UserCheck', roles: ['admin'] },
   { title: 'Classes', href: '/admin/classes', icon: 'School', roles: ['admin'] },
+  { title: 'Class Schedule', href: '/admin/schedule', icon: 'Calendar', roles: ['admin'] },
   { title: 'Exams', href: '/admin/exams', icon: 'FileText', roles: ['admin'] },
   { title: 'Attendance', href: '/admin/attendance', icon: 'ClipboardCheck', roles: ['admin'] },
   { title: 'Notice Board', href: '/admin/notices', icon: 'Megaphone', roles: ['admin'] },

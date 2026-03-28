@@ -6,13 +6,13 @@ import { navigationItems } from '@/constants/navigation';
 import {
   LayoutDashboard, GraduationCap, Users, UserCheck, School,
   FileText, ClipboardCheck, MessageSquare, Settings, Award,
-  TrendingUp, ChevronLeft, LogOut, X, CreditCard, Megaphone,
+  TrendingUp, ChevronLeft, LogOut, X, CreditCard, Megaphone, Calendar,
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const iconMap: Record<string, React.ElementType> = {
   LayoutDashboard, GraduationCap, Users, UserCheck, School,
-  FileText, ClipboardCheck, MessageSquare, Settings, Award, TrendingUp, CreditCard, Megaphone,
+  FileText, ClipboardCheck, MessageSquare, Settings, Award, TrendingUp, CreditCard, Megaphone, Calendar,
 };
 
 const AppSidebar = () => {
