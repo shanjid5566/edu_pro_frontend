@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuthStore } from '@/store/authStore';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '@/store/slices/authSlice';
+import { AppDispatch, RootState } from '@/store/store';
 import { navigationItems } from '@/constants/navigation';
 import {
   LayoutDashboard, GraduationCap, Users, UserCheck, School,
@@ -16,13 +18,29 @@ const iconMap: Record<string, React.ElementType> = {
 };
 
 const AppSidebar = () => {
-  const { user, logout, sidebarOpen, toggleSidebar } = useAuthStore();
+  const { user } = useSelector((state: RootState) => state.auth);
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const [collapsed, setCollapsed] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   if (!user) return null;
 
-  const items = navigationItems.filter(item => item.roles.includes(user.role));
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
+  };
+
+  console.log('AppSidebar - User role:', user?.role);
+  const items = navigationItems.filter(item => {
+    const matches = item.roles.includes(user.role);
+    console.log(`Checking if "${user?.role}" in [${item.roles.join(', ')}]:`, matches);
+    return matches;
+  });
+  console.log('Filtered items:', items);
 
   return (
     <>
@@ -126,7 +144,7 @@ const AppSidebar = () => {
         <div className={`border-t border-sidebar-border p-3 space-y-1`}>
 
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground hover:bg-destructive/20 hover:text-destructive transition-colors ${collapsed ? 'justify-center' : ''}`}
           >
             <LogOut className="h-5 w-5 shrink-0" />

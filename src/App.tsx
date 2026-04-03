@@ -3,7 +3,10 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useAuthStore } from "@/store/authStore";
+import { Provider, useSelector, useDispatch } from "react-redux";
+import { store, RootState, AppDispatch } from "@/store/store";
+import { fetchProfile } from "@/store/slices/authSlice";
+import { useEffect } from "react";
 
 import Login from "@/pages/auth/Login";
 import DashboardLayout from "@/layouts/DashboardLayout";
@@ -41,7 +44,18 @@ import NotFound from "@/pages/NotFound";
 const queryClient = new QueryClient();
 
 const AppRoutes = () => {
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, token } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch<AppDispatch>();
+
+  /**
+   * Fetch user profile on app load if token exists but user doesn't
+   * This ensures user data is synced with backend
+   */
+  useEffect(() => {
+    if (token && !user) {
+      dispatch(fetchProfile());
+    }
+  }, [token, user, dispatch]);
 
   return (
     <Routes>
@@ -49,11 +63,11 @@ const AppRoutes = () => {
         path="/"
         element={
           isAuthenticated && user
-            ? <Navigate to={`/${user.role}/dashboard`} replace />
+            ? <Navigate to={`/${user.role.toLowerCase()}/dashboard`} replace />
             : <Navigate to="/login" replace />
         }
       />
-      <Route path="/login" element={isAuthenticated ? <Navigate to={`/${user?.role}/dashboard`} replace /> : <Login />} />
+      <Route path="/login" element={isAuthenticated && user ? <Navigate to={`/${user.role.toLowerCase()}/dashboard`} replace /> : <Login />} />
 
       {/* Admin Routes */}
       <Route element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout /></ProtectedRoute>}>
@@ -107,15 +121,17 @@ const AppRoutes = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <Provider store={store}>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </Provider>
 );
 
 export default App;

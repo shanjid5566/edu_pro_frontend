@@ -1,32 +1,53 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuthStore } from '@/store/authStore';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginAsync } from '@/store/slices/authSlice';
+import { AppDispatch, RootState } from '@/store/store';
 import { UserRole } from '@/types';
 import { motion } from 'framer-motion';
 import { GraduationCap, Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 
 const Login = () => {
-  const [email, setEmail] = useState('admin@school.com');
-  const [password, setPassword] = useState('password');
-  const [role, setRole] = useState<UserRole>('admin');
+  const [email, setEmail] = useState('admin@edupro.com');
+  const [password, setPassword] = useState('password123');
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const navigate = useNavigate();
-  const login = useAuthStore(s => s.login);
+  const dispatch = useDispatch<AppDispatch>();
+  
+  const { loading, error, isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+
+  // Auto-redirect after successful login
+  useEffect(() => {
+    if (isAuthenticated && user?.role) {
+      const roleRoute = user.role.toLowerCase();
+      console.log('Redirecting to:', `/${roleRoute}/dashboard`);
+      navigate(`/${roleRoute}/dashboard`);
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    
     if (!email || !password) {
-      setError('Please fill in all fields');
       return;
     }
-    setLoading(true);
-    await new Promise(r => setTimeout(r, 800));
-    login(email, password, role);
-    setLoading(false);
-    navigate(`/${role}/dashboard`);
+
+    console.log('Submitting login with:', { email, password });
+    await dispatch(loginAsync({ email, password }));
+  };
+
+  // Role-specific credentials for quick login
+  const roleCredentials: Record<UserRole, { email: string; password: string }> = {
+    admin: { email: 'admin@edupro.com', password: 'password123' },
+    teacher: { email: 'sarah@edupro.com', password: 'password123' },
+    student: { email: 'alice.johnson@edupro.com', password: 'password123' },
+    parent: { email: 'parent@edupro.com', password: 'password123' },
+  };
+
+  // Handle role selection and auto-fill credentials
+  const handleRoleSelect = (selectedRole: UserRole) => {
+    setEmail(roleCredentials[selectedRole].email);
+    setPassword(roleCredentials[selectedRole].password);
   };
 
   const roles: { value: UserRole; label: string; color: string }[] = [
@@ -79,16 +100,16 @@ const Login = () => {
           <p className="mb-8 text-muted-foreground">Sign in to your account to continue</p>
 
           {/* Role selector */}
-          <div className="mb-6">
-            <label className="mb-2 block text-sm font-medium text-foreground">Login as</label>
+          <div className="mb-8">
+            <label className="mb-3 block text-sm font-medium text-foreground">Quick Login - Choose a Role</label>
             <div className="grid grid-cols-4 gap-2">
               {roles.map(r => (
                 <button
                   key={r.value}
                   type="button"
-                  onClick={() => setRole(r.value)}
+                  onClick={() => handleRoleSelect(r.value)}
                   className={`rounded-lg px-3 py-2 text-xs font-medium transition-all ${
-                    role === r.value
+                    email === roleCredentials[r.value].email
                       ? `${r.color} text-primary-foreground shadow-md`
                       : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                   }`}
@@ -97,6 +118,7 @@ const Login = () => {
                 </button>
               ))}
             </div>
+            <p className="mt-2 text-xs text-muted-foreground">💡 Click a role to auto-fill credentials, then click Sign In</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -151,11 +173,6 @@ const Login = () => {
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Sign In'}
             </button>
           </form>
-
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-primary hover:underline">Sign up</Link>
-          </p>
         </motion.div>
       </div>
     </div>

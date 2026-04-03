@@ -1,7 +1,10 @@
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { GraduationCap, Users, School, UserCheck, TrendingUp, Calendar } from 'lucide-react';
 import StatsCard from '@/components/dashboard/StatsCard';
-import { mockStats, mockAttendanceData, mockPerformanceData } from '@/services/mockData';
+import { fetchDashboard } from '@/store/slices/adminSlice';
+import { AppDispatch, RootState } from '@/store/store';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 
 const pieData = [
@@ -11,18 +14,48 @@ const pieData = [
 ];
 const PIE_COLORS = ['hsl(142, 76%, 36%)', 'hsl(0, 84%, 60%)', 'hsl(38, 92%, 50%)'];
 
-const recentActivities = [
-  { id: 1, text: 'New student Sarah Johnson enrolled in Class 10-A', time: '2 min ago', icon: GraduationCap },
-  { id: 2, text: 'Mid-term exam results published for Class 9', time: '15 min ago', icon: TrendingUp },
-  { id: 3, text: 'Parent meeting scheduled for March 15th', time: '1 hour ago', icon: Calendar },
-  { id: 4, text: 'Teacher Emily Carter marked attendance for 10-A', time: '2 hours ago', icon: Users },
-];
-
 const AdminDashboard = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { stats, attendanceData, performanceData, recentActivity, loading } = useSelector(
+    (state: RootState) => state.admin
+  );
+
+  useEffect(() => {
+    dispatch(fetchDashboard());
+  }, [dispatch]);
+
   const container = {
     hidden: { opacity: 0 },
     show: { opacity: 1, transition: { staggerChildren: 0.08 } },
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <p className="text-muted-foreground">Loading dashboard...</p>
+      </div>
+    );
+  }
+
+  // Transform attendance data for chart (count -> attendance for compatibility)
+  const chartAttendanceData = attendanceData.map(item => ({
+    ...item,
+    attendance: item.count,
+  }));
+
+  // Transform performance data (averageMarks -> average for compatibility)
+  const chartPerformanceData = performanceData.map(item => ({
+    ...item,
+    average: item.averageMarks,
+  }));
+
+  // Format recent activities
+  const formattedActivities = recentActivity.map(activity => ({
+    id: activity.id,
+    text: `${activity.user} - ${activity.description}`,
+    time: new Date(activity.timestamp).toLocaleString(),
+    icon: TrendingUp,
+  }));
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
@@ -33,10 +66,10 @@ const AdminDashboard = () => {
 
       {/* Stats Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatsCard title="Total Students" value={mockStats.totalStudents.toLocaleString()} change="+12 this month" changeType="positive" icon={GraduationCap} glowClass="stat-glow-primary" />
-        <StatsCard title="Total Teachers" value={mockStats.totalTeachers} change="+2 this month" changeType="positive" icon={Users} glowClass="stat-glow-success" />
-        <StatsCard title="Total Classes" value={mockStats.totalClasses} change="3 new sections" changeType="neutral" icon={School} glowClass="stat-glow-warning" />
-        <StatsCard title="Total Parents" value={mockStats.totalParents.toLocaleString()} change="+8 this month" changeType="positive" icon={UserCheck} glowClass="stat-glow-accent" />
+        <StatsCard title="Total Students" value={stats?.totalStudents.toLocaleString() || '0'} change="+12 this month" changeType="positive" icon={GraduationCap} glowClass="stat-glow-primary" />
+        <StatsCard title="Total Teachers" value={stats?.totalTeachers.toString() || '0'} change="+2 this month" changeType="positive" icon={Users} glowClass="stat-glow-success" />
+        <StatsCard title="Total Classes" value={stats?.totalClasses.toString() || '0'} change="3 new sections" changeType="neutral" icon={School} glowClass="stat-glow-warning" />
+        <StatsCard title="Total Parents" value={stats?.totalParents.toLocaleString() || '0'} change="+8 this month" changeType="positive" icon={UserCheck} glowClass="stat-glow-accent" />
       </div>
 
       {/* Charts */}
@@ -45,10 +78,10 @@ const AdminDashboard = () => {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="rounded-xl border border-border bg-card p-5">
           <h3 className="mb-4 text-base font-semibold text-foreground">Attendance Trend</h3>
           <ResponsiveContainer width="100%" height={260}>
-            <LineChart data={mockAttendanceData}>
+            <LineChart data={chartAttendanceData}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} domain={[80, 100]} />
+              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} domain={[0, 100]} />
               <Tooltip
                 contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--foreground))' }}
               />
@@ -61,7 +94,7 @@ const AdminDashboard = () => {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="rounded-xl border border-border bg-card p-5">
           <h3 className="mb-4 text-base font-semibold text-foreground">Performance by Subject</h3>
           <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={mockPerformanceData}>
+            <BarChart data={chartPerformanceData}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis dataKey="subject" stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
@@ -103,7 +136,7 @@ const AdminDashboard = () => {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="rounded-xl border border-border bg-card p-5 lg:col-span-2">
           <h3 className="mb-4 text-base font-semibold text-foreground">Recent Activity</h3>
           <div className="space-y-4">
-            {recentActivities.map(activity => (
+            {formattedActivities.map(activity => (
               <div key={activity.id} className="flex items-start gap-3">
                 <div className="rounded-lg bg-primary/10 p-2">
                   <activity.icon className="h-4 w-4 text-primary" />

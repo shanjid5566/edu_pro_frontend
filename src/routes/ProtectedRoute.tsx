@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
-import { useAuthStore } from '@/store/authStore';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
 import { UserRole } from '@/types';
 
 interface ProtectedRouteProps {
@@ -8,14 +9,18 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />;
   }
 
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to={`/${user.role}/dashboard`} replace />;
+  // Normalize role to lowercase for comparison
+  const userRoleLower = user.role.toLowerCase();
+  const allowedRolesLower = allowedRoles?.map(r => r.toLowerCase());
+
+  if (allowedRolesLower && !allowedRolesLower.includes(userRoleLower)) {
+    return <Navigate to={`/${userRoleLower}/dashboard`} replace />;
   }
 
   return <>{children}</>;
