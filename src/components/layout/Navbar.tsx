@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '@/store/slices/authSlice';
+import { updatePreferences } from '@/store/slices/settingsSlice';
 import { RootState, AppDispatch } from '@/store/store';
 import {
   Menu, Search, Bell, Sun, Moon, ChevronDown, LogOut, User, Settings,
@@ -10,22 +11,36 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const { user } = useSelector((state: RootState) => state.auth);
+  const { preferences } = useSelector((state: RootState) => state.settings);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
   const unreadCount = 0; // Placeholder for notifications
   const notifications = []; // Placeholder
 
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+  const toggleTheme = async () => {
+    const nextTheme = isDarkMode ? 'light' : 'dark';
+    setIsDarkMode(nextTheme === 'dark');
+    document.documentElement.classList.toggle('dark', nextTheme === 'dark');
+
+    try {
+      await dispatch(
+        updatePreferences({
+          theme: nextTheme,
+          sidebarStyle: preferences.sidebarStyle,
+          language: preferences.language,
+        })
+      ).unwrap();
+    } catch {
+      document.documentElement.classList.toggle('dark', isDarkMode);
+      setIsDarkMode(isDarkMode);
+    }
   };
 
   const handleLogout = () => {
@@ -42,6 +57,15 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
+  useEffect(() => {
+    const darkFromPreference =
+      preferences.theme === 'dark' ||
+      (preferences.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+    setIsDarkMode(darkFromPreference);
+    document.documentElement.classList.toggle('dark', darkFromPreference);
+  }, [preferences.theme]);
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-card/80 backdrop-blur-md px-4 lg:px-6">
       {/* Left */}
@@ -54,7 +78,7 @@ const Navbar = () => {
       {/* Right */}
       <div className="flex items-center gap-2">
         <button onClick={toggleTheme} className="rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
-          {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+          {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
         </button>
 
         {/* Notifications */}

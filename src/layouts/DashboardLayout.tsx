@@ -1,9 +1,28 @@
+import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import AppSidebar from '@/components/layout/AppSidebar';
 import Navbar from '@/components/layout/Navbar';
 import { motion } from 'framer-motion';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/store/store';
+import { fetchPreferences } from '@/store/slices/settingsSlice';
 
 const DashboardLayout = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { preferences } = useSelector((state: RootState) => state.settings);
+
+  useEffect(() => {
+    dispatch(fetchPreferences());
+  }, [dispatch]);
+
+  useEffect(() => {
+    const isDark =
+      preferences.theme === 'dark' ||
+      (preferences.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+    document.documentElement.classList.toggle('dark', isDark);
+  }, [preferences.theme]);
+
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
       <AppSidebar />

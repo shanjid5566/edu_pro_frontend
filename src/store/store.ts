@@ -9,6 +9,7 @@ import classScheduleReducer from './slices/classScheduleSlice';
 import examReducer from './slices/examSlice';
 import attendanceReducer from './slices/attendanceSlice';
 import noticeReducer from './slices/noticeSlice';
+import settingsReducer from './slices/settingsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     exam: examReducer,
     attendance: attendanceReducer,
     notice: noticeReducer,
+    settings: settingsReducer,
   },
 });
 

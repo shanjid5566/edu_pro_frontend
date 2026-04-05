@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,11 +19,16 @@ const iconMap: Record<string, React.ElementType> = {
 
 const AppSidebar = () => {
   const { user } = useSelector((state: RootState) => state.auth);
+  const { preferences } = useSelector((state: RootState) => state.settings);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const [collapsed, setCollapsed] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    setCollapsed(preferences.sidebarStyle === 'compact');
+  }, [preferences.sidebarStyle]);
 
   if (!user) return null;
 
@@ -34,13 +39,9 @@ const AppSidebar = () => {
     navigate('/login');
   };
 
-  console.log('AppSidebar - User role:', user?.role);
   const items = navigationItems.filter(item => {
-    const matches = item.roles.includes(user.role);
-    console.log(`Checking if "${user?.role}" in [${item.roles.join(', ')}]:`, matches);
-    return matches;
+    return item.roles.includes(user.role);
   });
-  console.log('Filtered items:', items);
 
   return (
     <>
