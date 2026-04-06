@@ -52,7 +52,13 @@ export const ADMIN_ENDPOINTS = {
 // Teacher Endpoints
 export const TEACHER_ENDPOINTS = {
   DASHBOARD: '/api/v1/teacher/dashboard',
+  DASHBOARD_OVERVIEW: '/api/v1/teacher/dashboard/overview',
+  DASHBOARD_ATTENDANCE_TREND: '/api/v1/teacher/dashboard/attendance-trend',
+  DASHBOARD_STUDENT_PERFORMANCE: '/api/v1/teacher/dashboard/student-performance',
   CLASSES: '/api/v1/teacher/classes',
+  CLASSES_SCHEDULE_TODAY: '/api/v1/teacher/classes/schedule/today',
+  CLASS_BY_ID: (classId: string) => `/api/v1/teacher/classes/${classId}`,
+  CLASS_STATISTICS: (classId: string) => `/api/v1/teacher/classes/${classId}/statistics`,
   ATTENDANCE: '/api/v1/teacher/attendance',
   ATTENDANCE_MARK: '/api/v1/teacher/attendance/mark',
   EXAMS: '/api/v1/teacher/exams',
