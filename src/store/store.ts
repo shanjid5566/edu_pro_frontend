@@ -12,6 +12,15 @@ import noticeReducer from './slices/noticeSlice';
 import settingsReducer from './slices/settingsSlice';
 import teacherDashboardReducer from './slices/teacherDashboardSlice';
 import teacherClassesReducer from './slices/teacherClassesSlice';
+import teacherAttendanceReducer from './slices/teacherAttendanceSlice';
+import teacherNoticesReducer from './slices/teacherNoticesSlice';
+import studentDashboardReducer from './slices/studentDashboardSlice';
+import studentClassesReducer from './slices/studentClassesSlice';
+import studentExamsReducer from './slices/studentExamsSlice';
+import studentResultsReducer from './slices/studentResultsSlice';
+import studentFeesReducer from './slices/studentFeesSlice';
+import parentDashboardReducer from './slices/parentDashboardSlice';
+import parentProgressReducer from './slices/parentProgressSlice';
 
 export const store = configureStore({
   reducer: {
@@ -28,6 +37,15 @@ export const store = configureStore({
     settings: settingsReducer,
     teacherDashboard: teacherDashboardReducer,
     teacherClasses: teacherClassesReducer,
+    teacherAttendance: teacherAttendanceReducer,
+    teacherNotices: teacherNoticesReducer,
+    studentDashboard: studentDashboardReducer,
+    studentClasses: studentClassesReducer,
+    studentExams: studentExamsReducer,
+    studentResults: studentResultsReducer,
+    studentFees: studentFeesReducer,
+    parentDashboard: parentDashboardReducer,
+    parentProgress: parentProgressReducer,
   },
 });
 

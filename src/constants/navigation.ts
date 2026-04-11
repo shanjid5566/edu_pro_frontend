@@ -29,9 +29,8 @@ export const navigationItems: NavItem[] = [
   { title: 'Chat', href: '/student/chat', icon: 'MessageSquare', roles: ['student'] },
 
   { title: 'Dashboard', href: '/parent/dashboard', icon: 'LayoutDashboard', roles: ['parent'] },
-  { title: "Child's Progress", href: '/parent/progress', icon: 'TrendingUp', roles: ['parent'] },
-  { title: 'Attendance', href: '/parent/attendance', icon: 'ClipboardCheck', roles: ['parent'] },
-  { title: 'Fees', href: '/parent/fees', icon: 'CreditCard', roles: ['parent'] },
-  { title: 'Notice Board', href: '/parent/notices', icon: 'Megaphone', roles: ['parent'] },
+  // { title: "Child's Progress", href: '/parent/progress', icon: 'TrendingUp', roles: ['parent'] },
+  // { title: 'Attendance', href: '/parent/attendance', icon: 'ClipboardCheck', roles: ['parent'] },
+  // { title: 'Notice Board', href: '/parent/notices', icon: 'Megaphone', roles: ['parent'] },
   { title: 'Chat', href: '/parent/chat', icon: 'MessageSquare', roles: ['parent'] },
 ];

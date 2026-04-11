@@ -26,6 +26,7 @@ import TeacherDashboard from "@/pages/teacher/Dashboard";
 import TeacherClasses from "@/pages/teacher/Classes";
 import TeacherAttendance from "@/pages/teacher/Attendance";
 import TeacherExams from "@/pages/teacher/Exams";
+import TeacherNotices from "@/pages/teacher/Notices";
 
 import StudentDashboard from "@/pages/student/Dashboard";
 import StudentClasses from "@/pages/student/Classes";
@@ -90,7 +91,7 @@ const AppRoutes = () => {
         <Route path="/teacher/classes" element={<TeacherClasses />} />
         <Route path="/teacher/attendance" element={<TeacherAttendance />} />
         <Route path="/teacher/exams" element={<TeacherExams />} />
-        <Route path="/teacher/notices" element={<NoticeBoard />} />
+        <Route path="/teacher/notices" element={<TeacherNotices />} />
         <Route path="/teacher/chat" element={<ChatPage currentUserRole="teacher" />} />
       </Route>
 
