@@ -21,6 +21,7 @@ import studentResultsReducer from './slices/studentResultsSlice';
 import studentFeesReducer from './slices/studentFeesSlice';
 import parentDashboardReducer from './slices/parentDashboardSlice';
 import parentProgressReducer from './slices/parentProgressSlice';
+import chatReducer from './slices/chatSlice';
 
 export const store = configureStore({
   reducer: {
@@ -46,6 +47,7 @@ export const store = configureStore({
     studentFees: studentFeesReducer,
     parentDashboard: parentDashboardReducer,
     parentProgress: parentProgressReducer,
+    chat: chatReducer,
   },
 });
 
