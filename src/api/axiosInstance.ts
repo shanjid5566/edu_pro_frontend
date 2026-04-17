@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://edu-pro-backend.vercel.app';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://edu-pro-backend.onrender.com';
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
